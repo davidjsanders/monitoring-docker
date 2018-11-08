@@ -1,0 +1,3 @@
+GF_SERVER_ROOT_URL="http://djs-snet-djs-docker-mgt-dev-eus-5021-1-5021.eastus.cloudapp.azure.com"
+GF_SECURITY_ADMIN_PASSWORD=foobar
+GF_USERS_ALLOW_SIGN_UP=false

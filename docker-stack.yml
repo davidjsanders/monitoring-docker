@@ -1,0 +1,63 @@
+version: '3.7'
+
+volumes:
+  prometheus_data:
+  prometheus_config:
+  grafana_data:
+  grafana_config:
+
+networks:
+  worknet:
+
+services:
+  cadvisor:
+    image: google/cadvisor:v0.31.0
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    ports:
+      - 8080:8080
+    depends_on:
+      - worknet
+    networks:
+      - worknet
+    deploy:
+      mode: global
+
+  prometheus:
+    image: prom/prometheus:v2.5.0
+    ports:
+      - 9090:9090
+    volumes:
+ #     - $WORKDIR/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+      - prometheus_config:/etc/prometheus
+    depends_on:
+      - cadvisor
+    networks:
+      - worknet
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.role==manager
+
+#   grafana:
+#     image: grafana/grafana:5.3.2
+#     depends_on:
+#       - prometheus
+#     ports:
+#       - 3000:3000
+#     volumes:
+#       - grafana_data:/var/lib/grafana
+#       - grafana_config:/etc/grafana/
+# #      - $WORKDIR/grafana/provisioning/:/etc/grafana/provisioning/
+#     env_file:
+#       - $WORKDIR/grafana/config.monitoring
+#     networks:
+#       - worknet
+#     deploy:
+#       mode: global
